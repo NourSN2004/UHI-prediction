@@ -122,7 +122,7 @@ The full project report is available as **EECE_693_Final_Report.pdf**. Highlight
 ## 👩‍💻 Authors
 - Ahmad Hlayhel (@ahmadhlayhel)
 - John Lahoud (@lahoudjohn)
-- Malak Ammar (@malakammar)
+- Malak Ammar (@ammar-m-s)
 - **Nour Shammaa** (@NourSN2004)
 
 ---
