@@ -126,7 +126,7 @@ The full project report is available as **EECE_693_Final_Report.pdf**. Highlight
 - **Nour Shammaa** (@NourSN2004)
 
 ---
-## 👩‍💻 Contributions
+## 
 Special Thanks to Dr. Mariette Awad and Dr. Hadi Mobasher for their support and guidance.
 ---
 ## 📧 Contact
