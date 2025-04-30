@@ -477,7 +477,7 @@ for epoch in range(1, num_epochs+1):
             print(f"↳ Early stopping at epoch {epoch}")
             break
 
-"""k i wantu  to give me the code cell to update  for the 1st option and 2nd together meanng i want also along with 1st option to use this new  ssim thing and also combine with them the 4th option, give me the entire codes updates pls"""
+
 
 # Cell 2 ▶ Consolidated imports
 import os
