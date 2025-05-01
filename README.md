@@ -1,7 +1,4 @@
-<h1 align="center" style="color:#870637">🌇 Predicting NYC Land Surface Temperature</h1>
-<p align="center">
-  
-</p>
+# 🌇 Predicting NYC Land Surface Temperature
 
 ## 📖 Overview
 This repository delivers a suite of deep-learning models for high-resolution (30 m, 16-day) Land Surface Temperature (LST) prediction in New York City. We leverage Landsat 8–derived indices (NDVI, NDBI, MNDWI) and hourly NOAA meteorological observations to benchmark architectures including CNNs, U-Nets, Vision Transformers, GANs, LSTMs/GRUs, and physics-informed networks.
@@ -12,11 +9,13 @@ This repository delivers a suite of deep-learning models for high-resolution (30
   - [📖 Overview](#📖-overview)
   - [📁 Project Structure](#📁-project-structure)
   - [🚀 Quick Start](#🚀-quick-start)
+  - [🖥️ UI Application](#🖥️-ui-application)
   - [💾 Preprocessing](#💾-preprocessing)
   - [📂 Datasets](#📂-datasets)
   - [🔍 Architectures](#🔍-architectures)
   - [🧪 Testing](#🧪-testing)
   - [📊 Report & Results](#📊-report--results)
+  - [🔑 Key Findings](#🔑-key-findings)
   - [👩‍💻 Authors](#👩‍💻-authors)
   - [📧 Contact](#📧-contact)
   - [📜 License](#📜-license)
@@ -27,95 +26,107 @@ This repository delivers a suite of deep-learning models for high-resolution (30
 
 ## 📁 Project Structure
 ```
-├── Architectures/          # Model implementations
-│   ├── CNN_MLP/            # CNN + MLP baseline
-│   ├── Unet/               # U-Net variants
-│   ├── Unet-Vit-hybrid/    # TransUNet (MiT + U-Net)
-│   ├── LSTM_vit/           # ViT + LSTM fusion
-│   ├── GAN_meteo/          # Weather-only GAN augmentation
-│   ├── GRU/                # ViT + GRU fusion
-│   ├── TransUnet/          # Transformer-augmented U-Net
-│   ├── VIT_PINN_transformer/# Physics-informed ViT
-│   ├── Vit/                # Vision Transformer baseline
-│   └── Final_Optimal/      # Best-performing config
-├── Preprocessing/          # Jupyter notebook for data prep
-├── testing/                # Test scripts & evaluation notebooks
+├── Architectures/             # Model implementations
+├── Preprocessing/             # Jupyter notebook for data prep
+├── testing/                   # Test scripts & evaluation notebooks
 ├── EECE_693_Final_Report.pdf  # Project report
-├── requirements.txt        # Python dependencies
-└── README.md               # This file
+├── app.py                     # Streamlit UI application
+└── README.md                  # This file
 ```
 
 ---
 
 ## 🚀 Quick Start
 1. Open the `Preprocessing.ipynb` notebook in Google Colab.
-2. Mount your Google Drive containing downloaded Landsat 8 and NOAA files.
-3. Update the path variables in the first cell to point to your data.
-4. Run all cells to preprocess imagery and meteorological records.
-5. Navigate to an architecture folder (e.g., `Architectures/TransUnet`) and run its training and evaluation cells in Colab or locally.
+2. Mount your Google Drive containing Landsat 8 and NOAA files.
+3. Update path variables (`LST_PATH`, `METEO_CSV_PATH`) in the first cell.
+4. Run all preprocessing cells to generate 64×64 patches and clean data.
+5. Navigate to an architecture folder (e.g., `Architectures/TransUnet`) and execute training/evaluation.
+
+---
+
+## 🖥️ UI Application
+An interactive Streamlit interface for on-the-fly LST prediction.
+
+Users can select any date within the available range and draw or specify any custom patch over New York City to retrieve the predicted LST for that location and time.
+
+**Launch steps:**
+```bash
+cd path/to/project
+# (Optional) setup venv
+python -m venv venv
+source venv/bin/activate  # macOS/Linux
+venv\\Scripts\\activate  # Windows
+
+# Install dependencies
+pip install streamlit folium streamlit-folium numpy torch pillow mercantile requests
+
+# Run the app
+streamlit run app.py
+```
+
+Then open `http://localhost:8501` in your browser to use the NYC LST Predictor UI.
 
 ---
 
 ## 💾 Preprocessing
-**Setup Instructions:**
-1. **Download Official Landsat 8 Data**
-   - Use USGS EarthExplorer or Google Earth Engine to export LST bands for NYC.
-2. **Download Hourly Meteorological Data**
-   - Fetch CSVs from NOAA Global Hourly: https://www.ncei.noaa.gov/access/search/data-search/global-hourly
-3. **Update Preprocessing Paths**
-   - In the first cell of `Preprocessing.ipynb`, set `LST_PATH` to your Landsat folder and `METEO_CSV_PATH` to the NOAA CSV location.
+**Setup:**
+1. **Landsat 8 Data:** Export LST bands via USGS EarthExplorer or Google Earth Engine.
+2. **NOAA Data:** Download hourly meteorological CSVs from the NOAA Global Hourly portal.
+3. **Configure Paths:** Set `LST_PATH` and `METEO_CSV_PATH` in `Preprocessing.ipynb`.
 
-Once paths are set, run the notebook cells to generate 64×64 patches and clean the data.
+Run the notebook to produce cleaned datasets ready for modeling.
 
 ---
 
 ## 📂 Datasets
-- **Cleaned Meteorological Data:** [Google Drive File](https://drive.google.com/file/d/1ss4D_ZkzQWdW9VIsAOJFZBPHo05u04sR/view?usp=drive_link)
-- **Final cleaned LST with Meteo:** [Google Drive Folder](https://drive.google.com/drive/folders/1nXb8mzun6akRigNKNxWN9S0lplsE6m3V?usp=drive_link)
+- **Meteorological Data:** [Drive Link](https://drive.google.com/file/d/1ss4D_ZkzQWdW9VIsAOJFZBPHo05u04sR/view)
+- **LST + Meteo Patches:** [Drive Folder](https://drive.google.com/drive/folders/1nXb8mzun6akRigNKNxWN9S0lplsE6m3V)
 
 ---
 
 ## 🔍 Architectures
 <details>
-<summary>List of implementations</summary>
+<summary>Click to expand model list</summary>
 
-- **CNN_MLP**: Baseline CNN + MLP fusion of image & weather tokens.
-- **Unet**: Standard U-Net with multiple variants — loss functions include Smooth L1, L1, and Focal-Tversky; one implementation features a ResNet encoder, while another integrates the SEBlock described in the report.
-- **Unet-Vit-hybrid**: TransUNet combining the Mix Transformer (MiT-B0) backbone with a U-Net decoder for spatio-temporal fusion.
-- **LSTM_vit**: Vision Transformer backbone fused with a 6-hour LSTM head to incorporate sequential meteorological inputs.
-- **GAN_meteo**: Conditional GAN architecture for data augmentation, generating synthetic meteorological feature maps only.
-- **GRU**: Fusion model using a Vision Transformer encoder with a GRU module to process weather sequences.
-- **TransUnet**: Transformer-augmented U-Net that leverages self-attention layers and employs the Focal-Tversky loss for improved boundary delineation.
-- **VIT_PINN_transformer**: Physics-informed Vision Transformer integrating Newtonian cooling priors to enforce physically realistic temperature decay patterns.
-- **Vit**: Vision Transformer baseline model, enhanced through hyperparameter tuning and selective unfreezing of the final layer.
-- **Final_Optimal**: Hyperparameter-tuned best-performing configuration using a physics-informed Vision Transformer (achieved RMSE ≈ 0.21 °C).
+- **CNN_MLP:** Baseline CNN + MLP fusion.
+- **Unet:** Standard U-Net variants (ResNet encoder, SEBlock) with different losses (L1, Smooth L1, Focal-Tversky).
+- **Unet-Vit-hybrid:** TransUNet (MiT-B0 + U-Net decoder).
+- **LSTM_vit:** ViT backbone + 6-hour LSTM for weather.
+- **GAN_meteo:** Conditional GAN for meteorological data augmentation.
+- **GRU:** ViT encoder + GRU for weather sequences.
+- **TransUnet:** U-Net with self-attention and Focal-Tversky loss.
+- **VIT_PINN_transformer:** Physics-informed ViT using Newtonian cooling priors.
+- **Vit:** Vision Transformer baseline with hyperparameter tuning and last-layer unfreezing.
+- **Final_Optimal:** Physics-informed ViT achieving RMSE ≈ 0.21 °C.
 
 </details>
 
 ---
 
 ## 🧪 Testing
-We evaluated our data pipelines and model implementations using held-out LST and meteorological records from **2023**. All relevant test scripts and evaluation notebooks are located in the `testing/` directory.
+Test scripts and evaluation notebooks reside in `testing/`. They use held-out 2023 LST and meteorological records.
 
-To run tests:
-1. Mount your Google Drive in Colab or ensure local access to your data directories.
-2. Update the path variables in the first cell of each testing notebook to point to your LST and meteo data.
-3. Execute the notebook cells or run the test scripts directly in Colab or locally.
+**Run tests:**
+1. Mount your data in Colab or local paths.
+2. Update path variables in test notebooks.
+3. Execute all cells or run scripts directly.
 
 ---
 
 ## 📊 Report & Results
-The full project report is available as **EECE_693_Final_Report.pdf**. Highlights:
-- **Best RMSE**: 0.21 °C (Physics-informed Transformer)
-- **Ablation studies** on loss functions and data fusion strategies.
-- **Visualizations**: Loss curves, attention maps, spatial error heatmaps.
-- 
+See **EECE_693_Final_Report.pdf** for full details.
+
+- **Best RMSE:** 0.21 °C (Physics-informed ViT)
+- **Ablation Studies:** Loss functions & fusion strategies.
+- **Visuals:** Loss curves, attention maps, spatial error heatmaps.
+
 ---
 
 ## 🔑 Key Findings
-- **Vit (Vision Transformer)** with hyperparameter tuning and selective unfreezing of the final layer achieved strong convergence and low loss metrics.
-- **TransUnet** variant further improved loss performance, particularly at boundary regions, thanks to self-attention and Focal-Tversky loss.
-- The **VIT_PINN_transformer** (physics-informed Vision Transformer) was our most optimal model, integrating physical priors and achieving the lowest RMSE (~0.21 °C).
+- **ViT (baseline):** Strong performance with hyperparameter tuning & selective unfreezing.
+- **TransUnet:** Improved boundary accuracy via self-attention & Focal-Tversky loss.
+- **VIT_PINN_transformer:** Lowest RMSE (~0.21 °C) by embedding physical priors.
 
 ---
 
@@ -125,13 +136,12 @@ The full project report is available as **EECE_693_Final_Report.pdf**. Highlight
 - Malak Ammar (@ammar-m-s)
 - **Nour Shammaa** (@NourSN2004)
 
+Special thanks to Dr. Mariette Awad and Dr. Hadi Mobasher.
+
 ---
-## 
-Special Thanks to Dr. Mariette Awad and Dr. Hadi Mobasher for their support and guidance.
----
+
 ## 📧 Contact
-For questions or collaboration, please email:
-> **nour.shammaa@aub.edu.lb**
+For inquiries or collaboration, email **nour.shammaa@aub.edu.lb**.
 
 ---
 
