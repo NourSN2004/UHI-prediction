@@ -67,6 +67,7 @@ streamlit run app.py
 
 Then open `http://localhost:8501` in your browser to use the NYC LST Predictor UI.
 
+Chedk out our demo as a file in the above repo!
 ---
 
 ## 💾 Preprocessing
